@@ -2,7 +2,6 @@ module Main where
 
 import Data.Semigroup ((<>))
 import Generator
-import Generator.PrettyPrinter
 import Options.Applicative
 import Test.QuickCheck
 
@@ -24,8 +23,8 @@ checkSize (Cli props clientes)
 
 gen :: Int -> Int -> IO ()
 gen p c =
-  (generate . fmap (fmap pp) . genClientes) c >>= print
-    >> (generate . fmap (fmap pp) . genProps) p >>= print
+  (generate . toFormatMulti . genClientes) c >>= print
+    >> (generate . toFormatMulti . genProps) p >>= print
 
 data Cli
   = Cli
