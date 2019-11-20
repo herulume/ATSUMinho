@@ -4,33 +4,42 @@ import Data.Semigroup ((<>))
 import Generator
 import Generator.PrettyPrinter
 import Options.Applicative
+import Test.QuickCheck
 
 main :: IO ()
-main = greet =<< execParser opts
+main = checkSize =<< execParser opts
   where
     opts =
       info
-        (sample <**> helper)
+        (cli <**> helper)
         ( fullDesc
             <> progDesc "Gera um ficheiro de logs para UmCarroJa"
             <> header "generator - gerador de valores aleatorios para UmCarroJa"
         )
 
-greet :: Sample -> IO ()
-greet (Sample prop clientes) = putStrLn $ "Clientes: " <> show clientes <> "\nProprietarios: " <> show prop
+checkSize :: Cli -> IO ()
+checkSize (Cli props clientes)
+  | props >= 0 && clientes >= 0 = gen props clientes
+  | otherwise = return ()
 
-data Sample
-  = Sample
+gen :: Int -> Int -> IO ()
+gen p c =
+  (generate . fmap (fmap pp) . genClientes) c >>= print
+    >> (generate . fmap (fmap pp) . genProps) p >>= print
+
+data Cli
+  = Cli
       { prop :: Int,
         clientes :: Int
       }
 
-sample :: Parser Sample
-sample =
-  Sample
+cli :: Parser Cli
+cli =
+  Cli
     <$> option
       auto
       ( long "clientes"
+          <> short 'c'
           <> help "Numero de clientes"
           <> showDefault
           <> value 20
@@ -39,6 +48,7 @@ sample =
     <*> option
       auto
       ( long "proprietarios"
+          <> short 'p'
           <> help "Numero de proprietarios"
           <> showDefault
           <> value 20
