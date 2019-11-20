@@ -1,4 +1,4 @@
-module Generator.Data.Actor (Cliente, Prop, genClientes, genProps) where
+module Generator.Data.Actor (Cliente (..), Prop (..), genClientes, genProps) where
 
 import Control.Applicative
 import Control.Monad
@@ -12,7 +12,7 @@ import Test.QuickCheck
 
 data Cliente = Cliente Nome Nif Email Morada Pos Pos deriving (Show)
 
-data Prop = Prop Nome Email Nif Morada deriving (Show)
+data Prop = Prop Nome Nif Email Morada deriving (Show)
 
 type Nome = String
 

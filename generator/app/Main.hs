@@ -18,13 +18,8 @@ main = checkSize =<< execParser opts
 
 checkSize :: Cli -> IO ()
 checkSize (Cli props clientes)
-  | props >= 0 && clientes >= 0 = gen props clientes
+  | props >= 0 && clientes >= 0 = generate (gen props clientes) >>= print
   | otherwise = return ()
-
-gen :: Int -> Int -> IO ()
-gen p c =
-  (generate . toFormatMulti . genClientes) c >>= print
-    >> (generate . toFormatMulti . genProps) p >>= print
 
 data Cli
   = Cli
