@@ -1,8 +1,8 @@
 module Generator
   ( module Generator.Data,
-    toFormat,
     toFormatMulti,
     gen,
+    Log (..),
   )
 where
 
@@ -10,13 +10,10 @@ import Generator.Data
 import Generator.PrettyPrinter
 import Test.QuickCheck
 
-toFormat :: (PrettyPrinter a) => Gen a -> Gen String
-toFormat = fmap pp
+toFormatMulti :: (PrettyPrinter a) => [a] -> [String]
+toFormatMulti = fmap pp
 
-toFormatMulti :: (PrettyPrinter a) => Gen [a] -> Gen [String]
-toFormatMulti = fmap (fmap pp)
-
-data Log = Log {clientes :: [Cliente], props :: [Prop], carros :: [Carro], alugeres :: [Aluguer], classific :: [Classificar]} deriving (Show)
+data Log = Log {clientes :: [Cliente], props :: [Prop], carros :: [Carro], alugueres :: [Aluguer], classific :: [Classificar]} deriving (Show)
 
 gen :: Int -> Int -> Gen Log
 gen c p = do
@@ -26,7 +23,12 @@ gen c p = do
       propsNif = propsToNifs ps
   carros <- genCarros propsNif
   alugueres <- genAlugueres clientesNif
-  classfics <- genClassificas []
+  rMats <- choose (0, length carros)
+  rNifsC <- choose (0, length cs)
+  rNifsP <- choose (0, length ps)
+  let mats = fmap Left . carrosToMatriculas . take rMats $ carros
+      nifs = fmap Right $ take rNifsP propsNif <> take rNifsP clientesNif
+  classfics <- genClassificas $ mats <> nifs
   return $ Log cs ps carros alugueres classfics
 
 clientesToNifs :: [Cliente] -> [Nif]
@@ -34,3 +36,6 @@ clientesToNifs = fmap $ \(Cliente _ n _ _ _ _) -> n
 
 propsToNifs :: [Prop] -> [Nif]
 propsToNifs = fmap $ \(Prop _ n _ _) -> n
+
+carrosToMatriculas :: [Carro] -> [Matricula]
+carrosToMatriculas = fmap $ \(Carro _ _ m _ _ _ _ _ _ _) -> m

@@ -1,8 +1,11 @@
 module Main where
 
+import Control.Monad (join)
+import Data.List
 import Data.Semigroup ((<>))
 import Generator
 import Options.Applicative
+import System.IO
 import Test.QuickCheck
 
 main :: IO ()
@@ -17,14 +20,26 @@ main = checkSize =<< execParser opts
         )
 
 checkSize :: Cli -> IO ()
-checkSize (Cli props clientes)
-  | props >= 0 && clientes >= 0 = generate (gen props clientes) >>= print
+checkSize (Cli props clientes fd)
+  | props >= 0 && clientes >= 0 = generate (gen props clientes) >>= dump fd
   | otherwise = return ()
+
+dump :: FilePath -> Log -> IO ()
+dump fd l =
+  let cs = f clientes l
+      ps = f props l
+      cas = f carros l
+      als = f alugueres l
+      cla = f classific l
+   in writeFile fd (cs <> "\n" <> ps <> "\n" <> cas <> "\n" <> als <> "\n" <> cla)
+  where
+    f g = join . (++ ["\n"]) . intersperse "\n" . toFormatMulti . g
 
 data Cli
   = Cli
       { prop :: Int,
-        clientes :: Int
+        cliente :: Int,
+        ficheiro :: String
       }
 
 cli :: Parser Cli
@@ -39,12 +54,18 @@ cli =
           <> value 20
           <> metavar "INT"
       )
-    <*> option
-      auto
-      ( long "proprietarios"
-          <> short 'p'
-          <> help "Numero de proprietarios"
-          <> showDefault
-          <> value 20
-          <> metavar "INT"
-      )
+      <*> option
+        auto
+        ( long "proprietarios"
+            <> short 'p'
+            <> help "Numero de proprietarios"
+            <> showDefault
+            <> value 20
+            <> metavar "INT"
+        )
+      <*> strOption
+        ( long "ficheiro"
+            <> short 'f'
+            <> metavar "FICHEIRO"
+            <> help "Ficheiro de dump"
+        )

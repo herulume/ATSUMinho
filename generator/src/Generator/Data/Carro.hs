@@ -1,4 +1,4 @@
-module Generator.Data.Carro (Carro, genCarros) where
+module Generator.Data.Carro (Carro (..), genCarros) where
 
 import Control.Applicative
 import Control.Monad
