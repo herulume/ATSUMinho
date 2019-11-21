@@ -27,7 +27,7 @@ gen c p = do
   rNifsC <- choose (0, length cs)
   rNifsP <- choose (0, length ps)
   let mats = fmap Left . carrosToMatriculas . take rMats $ carros
-      nifs = fmap Right $ take rNifsP propsNif <> take rNifsP clientesNif
+      nifs = fmap Right $ take rNifsP propsNif <> take rNifsC clientesNif
   classfics <- genClassificas $ mats <> nifs
   return $ Log cs ps carros alugueres classfics
 
