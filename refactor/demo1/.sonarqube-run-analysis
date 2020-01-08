@@ -1,0 +1,4 @@
+mvn sonar:sonar \
+  -Dsonar.projectKey=demo1-refactor \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=933f70baa8ebecafa1657f64fa84d527cd043730
