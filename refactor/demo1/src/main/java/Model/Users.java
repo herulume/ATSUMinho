@@ -26,12 +26,15 @@ class Users implements Serializable {
     }
 
     List<String> getClientIDS() {
-        return this.userBase
-                .entrySet()
-                .stream()
-                .filter(e -> e.getValue() instanceof Client)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+        List<String> list = new ArrayList<>();
+        for (Map.Entry<String, User> e : this.userBase
+                .entrySet()) {
+            if (e.getValue() instanceof Client) {
+                String key = e.getKey();
+                list.add(key);
+            }
+        }
+        return list;
     }
 
     User getUser(String id) throws InvalidUserException {

@@ -41,11 +41,15 @@ public class Owner extends User {
 
     void accept(Rental r) {
         refuse(r);
-        this.pending = this.pending.stream()
-                .filter(e -> e
-                        .getCarID()
-                        .equals(r.getCarID()))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.pending) {
+            if (e
+                    .getCarID()
+                    .equals(r.getCarID())) {
+                list.add(e);
+            }
+        }
+        this.pending = list;
         this.historic.add(r);
     }
 

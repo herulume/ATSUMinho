@@ -155,13 +155,16 @@ public class Controller {
             this.menu.back();
             return error;
         }
+        List<List<String>> list = new ArrayList<>();
+        for (Rental rental : lR) {
+            String x = rental.toParsableUserString();
+            List<String> strings = Arrays.asList(x.split("\n"));
+            list.add(strings);
+        }
         String v = menu.reviewRentShow(
                 error,
                 owner.getRates(),
-                lR.stream()
-                        .map(Rental::toParsableUserString)
-                        .map(x -> Arrays.asList(x.split("\n")))
-                        .collect(Collectors.toList()));
+                list);
 
         try {
             switch (v.charAt(0)) {
@@ -265,39 +268,46 @@ public class Controller {
     }
 
     private void nUses() {
+        List<List<String>> list = new ArrayList<>();
+        long limit = 10;
+        for (Map.Entry<String, Integer> x : this.model.getBestClientsByUses()) {
+            List<String> strings = Arrays.asList(
+                    x.getKey(),
+                    x.getValue().toString());
+            if (limit-- == 0) break;
+            list.add(strings);
+        }
         menu.top10ClientsShow(
-                this.model.getBestClientsByUses()
-                        .stream()
-                        .map(x ->
-                                Arrays.asList(
-                                        x.getKey(),
-                                        x.getValue().toString()))
-                        .limit(10)
-                        .collect(Collectors.toList()),
+                list,
                 "Número de Utilizações");
         this.menu.back();
     }
 
     private void distance() {
+        List<List<String>> list = new ArrayList<>();
+        long limit = 10;
+        for (Map.Entry<String, Double> x : this.model.getBestClientsTravel()) {
+            List<String> strings = Arrays.asList(
+                    x.getKey(),
+                    String.format("%.2f", x.getValue()));
+            if (limit-- == 0) break;
+            list.add(strings);
+        }
         menu.top10ClientsShow(
-                this.model.getBestClientsTravel()
-                        .stream()
-                        .map(x ->
-                             Arrays.asList(
-                                     x.getKey(),
-                                     String.format("%.2f", x.getValue())))
-                        .limit(10)
-                        .collect(Collectors.toList()),
+                list,
                 "Distância");
         this.menu.back();
     }
 
     private String carOverview(String error) {
         Owner ownerCar = (Owner)this.user;
+        List<List<String>> list = new ArrayList<>();
+        for (Car x : ownerCar.getCars()) {
+            List<String> strings = Arrays.asList(x.toString().split("\n"));
+            list.add(strings);
+        }
         String action = this.menu.carOverviewShow(error,
-                ownerCar.getCars().stream()
-                .map(x -> Arrays.asList(x.toString().split("\n")))
-                .collect(Collectors.toList()));
+                list);
         try {
             switch (action.charAt(0)) {
                 case ' ':
@@ -363,12 +373,14 @@ public class Controller {
         try{
             TimeInterval ti = this.menu.getTimeInterval(error);
 
+            List<List<String>> list = new ArrayList<>();
+            for (Rental rental : this.model.getRentalListOwner((Owner) this.user, ti.getInicio(), ti.getFim())) {
+                String x = rental.toParsableOwnerRentalString();
+                List<String> strings = Arrays.asList(x.split("\n"));
+                list.add(strings);
+            }
             this.menu.rentalHistoryShow(ti,
-                    this.model.getRentalListOwner((Owner) this.user, ti.getInicio(), ti.getFim())
-                            .stream()
-                            .map(Rental::toParsableOwnerRentalString)
-                            .map(x -> Arrays.asList(x.split("\n")))
-                            .collect(Collectors.toList()));
+                    list);
 
             this.menu.back();
             error = "";
@@ -381,12 +393,14 @@ public class Controller {
         try{
             TimeInterval ti = this.menu.getTimeInterval(error);
 
+            List<List<String>> list = new ArrayList<>();
+            for (Rental rental : this.model.getRentalListClient((Client) this.user, ti.getInicio(), ti.getFim())) {
+                String x = rental.toParsableUserRentalString();
+                List<String> strings = Arrays.asList(x.split("\n"));
+                list.add(strings);
+            }
             this.menu.rentalHistoryShow(ti,
-                    this.model.getRentalListClient((Client) this.user, ti.getInicio(), ti.getFim())
-                            .stream()
-                            .map(Rental::toParsableUserRentalString)
-                            .map(x -> Arrays.asList(x.split("\n")))
-                            .collect(Collectors.toList()));
+                    list);
 
             this.menu.back();
             error = "";

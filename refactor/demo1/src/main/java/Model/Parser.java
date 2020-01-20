@@ -20,14 +20,18 @@ public class Parser {
 
     public Parser(String db, UMCarroJa model) {
         try {
-            this.file = Files
-                    .readAllLines(Paths.get(db), StandardCharsets.UTF_8)
-                    .stream()
-                    .map(String::trim)
-                    .filter(s -> !s.startsWith("--"))
-                    .filter(s -> s.contains(":") && s.contains(","))
-                    .map(e -> parseLine(e, model))
-                    .collect(Collectors.toList());
+            List<String> list = new ArrayList<>();
+            for (String s : Files
+                    .readAllLines(Paths.get(db), StandardCharsets.UTF_8)) {
+                String e = s.trim();
+                if (!e.startsWith("--")) {
+                    if (e.contains(":") && e.contains(",")) {
+                        String parseLine = parseLine(e, model);
+                        list.add(parseLine);
+                    }
+                }
+            }
+            this.file = list;
         } catch (IOException e) {
             e.printStackTrace();
         }

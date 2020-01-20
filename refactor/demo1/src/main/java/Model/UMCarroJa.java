@@ -50,22 +50,26 @@ public class UMCarroJa implements Serializable {
     }
 
     private Stream<Entry<String,List<Rental>>> getClientRentalsStream() {
-        return this
+        Map<String, List<Rental>> map = new HashMap<>();
+        for (String s : this
                 .users
-                .getClientIDS()
-                .stream()
-                .collect(Collectors
-                        .toMap(Function.identity(),
-                                rentals::getRentalListClient))
+                .getClientIDS()) {
+            if (map.put(s, rentals.getRentalListClient(s)) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
+        return map
                 .entrySet()
                 .stream();
     }
 
     private Double totalDistanceOfClient(Entry<String, List<Rental>> l){
-        return l.getValue()
-                .stream()
-                .mapToDouble(Rental::getDistance)
-                .sum();
+        double sum = 0.0;
+        for (Rental rental : l.getValue()) {
+            double distance = rental.getDistance();
+            sum += distance;
+        }
+        return sum;
     }
 
     private int totalUsesOfClient(Entry<String, List<Rental>> l){

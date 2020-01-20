@@ -19,11 +19,14 @@ public class Cars implements Serializable {
     }
 
     private Cars(Cars c) {
-        this.carBase = c.carBase
-                .values()
-                .stream()
-                .collect(Collectors
-                        .toMap(Car::getNumberPlate, Car::clone));
+        Map<String, Car> map = new HashMap<>();
+        for (Car car : c.carBase
+                .values()) {
+            if (map.put(car.getNumberPlate(), car.clone()) != null) {
+                throw new IllegalStateException("Duplicate key");
+            }
+        }
+        this.carBase = map;
     }
 
     /**
@@ -62,40 +65,48 @@ public class Cars implements Serializable {
      * @return Lista dos carros
      */
     public ArrayList<Car> listOfCarType(Vehicle.CarType b) {
-        return this.carBase
-                .values()
-                .stream()
-                .filter(e -> e.getVehicle().getType().equals(b))
-                .map(Car::clone)
-                .collect(Collectors
-                        .toCollection(ArrayList::new));
+        ArrayList<Car> cars = new ArrayList<>();
+        for (Car e : this.carBase
+                .values()) {
+            if (e.getVehicle().getType().equals(b)) {
+                Car clone = e.clone();
+                cars.add(clone);
+            }
+        }
+        return cars;
     }
 
     private Car getCarClosest(Point dest, Point origin, Vehicle.CarType a){
-        return this.carBase
-                .values()
-                .stream()
-                .filter(e -> e.getVehicle().getType().equals(a)
-                        && e.hasRange(dest)
-                        && e.isAvailable())
-                .sorted(Comparator.comparingDouble(e ->
-                        e.getPosition()
-                                .distanceBetweenPoints(origin)))
-                .collect(Collectors.toList())
+        List<Car> list = new ArrayList<>();
+        for (Car car : this.carBase
+                .values()) {
+            if (car.getVehicle().getType().equals(a)
+                    && car.hasRange(dest)
+                    && car.isAvailable()) {
+                list.add(car);
+            }
+        }
+        list.sort(Comparator.comparingDouble(e ->
+                e.getPosition()
+                        .distanceBetweenPoints(origin)));
+        return list
                 .get(0);
     }
 
     private Car getCarCheapest(Point dest, Vehicle.CarType a){
-        return this.carBase
-                .values()
-                .stream()
-                .filter(e -> e.getVehicle().getType().equals(a)
-                        && e.hasRange(dest)
-                        && e.getPosition().distanceBetweenPoints(dest) != 0
-                        && e.isAvailable())
-                .sorted(Comparator.comparingDouble(e -> e.getBasePrice() * e.getPosition()
-                        .distanceBetweenPoints(dest)))
-                .collect(Collectors.toList())
+        List<Car> list = new ArrayList<>();
+        for (Car car : this.carBase
+                .values()) {
+            if (car.getVehicle().getType().equals(a)
+                    && car.hasRange(dest)
+                    && car.getPosition().distanceBetweenPoints(dest) != 0
+                    && car.isAvailable()) {
+                list.add(car);
+            }
+        }
+        list.sort(Comparator.comparingDouble(e -> e.getBasePrice() * e.getPosition()
+                .distanceBetweenPoints(dest)));
+        return list
                 .get(0);
     }
 
@@ -117,15 +128,18 @@ public class Cars implements Serializable {
 
     Car getCar(Point dest, Point origin, double range, Vehicle.CarType a) throws NoCarAvaliableException {
         try {
-            return this.carBase
-                    .values()
-                    .stream()
-                    .filter(e -> e.getVehicle().getType().equals(a)
-                            && e.hasRange(dest)
-                            && origin.distanceBetweenPoints(e.getPosition()) <= range
-                            && e.isAvailable())
-                    .sorted(Comparator.comparingDouble(e -> e.getBasePrice() * origin.distanceBetweenPoints(dest)))
-                    .collect(Collectors.toList())
+            List<Car> list = new ArrayList<>();
+            for (Car car : this.carBase
+                    .values()) {
+                if (car.getVehicle().getType().equals(a)
+                        && car.hasRange(dest)
+                        && origin.distanceBetweenPoints(car.getPosition()) <= range
+                        && car.isAvailable()) {
+                    list.add(car);
+                }
+            }
+            list.sort(Comparator.comparingDouble(e -> e.getBasePrice() * origin.distanceBetweenPoints(dest)));
+            return list
                     .get(0);
         }
         catch(IndexOutOfBoundsException ignored) {
@@ -149,16 +163,19 @@ public class Cars implements Serializable {
 
     Car getCar(Point dest, double range, Vehicle.CarType a) throws NoCarAvaliableException {
         try {
-            return this.carBase
-                    .values()
-                    .stream()
-                    .filter(e -> e.getVehicle().getType().equals(a)
-                            && e.hasRange(dest)
-                            && e.getRange() >= range
-                            && e.isAvailable())
-                    .sorted(Comparator.comparingDouble(e -> e.getBasePrice() * e.getPosition()
-                            .distanceBetweenPoints(dest)))
-                    .collect(Collectors.toList())
+            List<Car> list = new ArrayList<>();
+            for (Car car : this.carBase
+                    .values()) {
+                if (car.getVehicle().getType().equals(a)
+                        && car.hasRange(dest)
+                        && car.getRange() >= range
+                        && car.isAvailable()) {
+                    list.add(car);
+                }
+            }
+            list.sort(Comparator.comparingDouble(e -> e.getBasePrice() * e.getPosition()
+                    .distanceBetweenPoints(dest)));
+            return list
                     .get(0);
         }
         catch (IndexOutOfBoundsException ignored) {

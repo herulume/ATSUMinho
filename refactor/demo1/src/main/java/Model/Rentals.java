@@ -31,22 +31,28 @@ class Rentals implements Serializable {
      */
     double getTotalBilledCar(Car car, LocalDateTime init, LocalDateTime end) {
         String carID = car.getNumberPlate();
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getCarID().equals(carID)
-                        && e.getDate().isAfter(init)
-                        && e.getDate().isBefore(end))
-                .map(Rental::getPrice)
-                .reduce(0.0, Double::sum);
+        Double acc = 0.0;
+        for (Rental e : this.rentalBase) {
+            if (e.getCarID().equals(carID)
+                    && e.getDate().isAfter(init)
+                    && e.getDate().isBefore(end)) {
+                Double price = e.getPrice();
+                acc = acc + price;
+            }
+        }
+        return acc;
     }
 
     double getTotalBilledCar(Car car) {
         String carID = car.getNumberPlate();
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getCarID().equals(carID))
-                .map(Rental::getPrice)
-                .reduce(0.0, Double::sum);
+        Double acc = 0.0;
+        for (Rental e : this.rentalBase) {
+            if (e.getCarID().equals(carID)) {
+                Double price = e.getPrice();
+                acc = acc + price;
+            }
+        }
+        return acc;
     }
 
     /**
@@ -58,11 +64,15 @@ class Rentals implements Serializable {
      */
     List<Rental> getRentalListClient(Client c, LocalDateTime init, LocalDateTime end) {
         String clientID = c.getEmail();
-        return this.rentalBase.stream()
-                .filter(e -> e.getClientID().equals(clientID)
-                        && e.getDate().isBefore(end)
-                        && e.getDate().isAfter(init))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.rentalBase) {
+            if (e.getClientID().equals(clientID)
+                    && e.getDate().isBefore(end)
+                    && e.getDate().isAfter(init)) {
+                list.add(e);
+            }
+        }
+        return list;
     }
 
     /**
@@ -71,18 +81,24 @@ class Rentals implements Serializable {
      * @return Lista dos alugueres
      */
     List<Rental> getRentalListClient(String clientID) {
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getClientID().equals(clientID))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.rentalBase) {
+            if (e.getClientID().equals(clientID)) {
+                list.add(e);
+            }
+        }
+        return list;
     }
 
     List<Rental> getRentalListClient(Client c) {
         String clientID = c.getEmail();
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getClientID().equals(clientID))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.rentalBase) {
+            if (e.getClientID().equals(clientID)) {
+                list.add(e);
+            }
+        }
+        return list;
     }
     /**
      * Calcula a lista de alugueres de um carro num intervalo de tempo.
@@ -93,20 +109,26 @@ class Rentals implements Serializable {
      */
     List<Rental> getRentalListOwner(Owner owner, LocalDateTime init, LocalDateTime end) {
         String carID = owner.getEmail();
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getOwnerID().equals(carID)
-                        && e.getDate().isBefore(end)
-                        && e.getDate().isAfter(init))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.rentalBase) {
+            if (e.getOwnerID().equals(carID)
+                    && e.getDate().isBefore(end)
+                    && e.getDate().isAfter(init)) {
+                list.add(e);
+            }
+        }
+        return list;
     }
 
     List<Rental> getRentalListOwner(Owner owner) {
         String carID = owner.getEmail();
-        return this.rentalBase
-                .stream()
-                .filter(e -> e.getOwnerID().equals(carID))
-                .collect(Collectors.toList());
+        List<Rental> list = new ArrayList<>();
+        for (Rental e : this.rentalBase) {
+            if (e.getOwnerID().equals(carID)) {
+                list.add(e);
+            }
+        }
+        return list;
     }
 
     @Override
