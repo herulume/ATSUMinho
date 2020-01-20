@@ -24,7 +24,7 @@ instance Arbitrary Carro where
   arbitrary = genCarro
 
 instance PrettyPrinter Carro where
-  pp (Carro t marca mat nif vm pk cpk auto x y) = ("NovoCarro:" <>) . join . intersperse "," $ [show t, marca, mat, nif, nif, show vm, show pk, show cpk, show auto, show x, show y]
+  pp (Carro t marca mat nif vm pk cpk auto x y) = ("NovoCarro:" <>) . join . intersperse "," $ [show t, marca, mat, nif, show vm, show pk, show cpk, show auto, show x, show y]
 
 genCarros :: [Nif] -> Gen [Carro]
 genCarros l = genMultiCondFrom l (\nif (Carro t marca mat _ vm pk cpk aut x y) -> Carro t marca mat nif vm pk cpk aut x y) (\(Carro _ _ mat _ _ _ _ _ _ _) -> mat)
