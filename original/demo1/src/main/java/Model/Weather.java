@@ -12,7 +12,7 @@ class Weather {
             "Winter"
     };
 
-    private String getSeason() {
+    String getSeason() {
         return seasons[LocalDateTime.now().getMonthValue()];
     }
 
