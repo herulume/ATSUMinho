@@ -56,7 +56,7 @@ genProp = do
   Prop n nif email <$> genMorada
 
 genEmail :: Nif -> Email
-genEmail = (<> "@notMail.com")
+genEmail = (<> "@gmail.com")
 
 genMorada :: Gen Morada
 genMorada = elements distritos
