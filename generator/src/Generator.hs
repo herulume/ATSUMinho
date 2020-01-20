@@ -15,14 +15,14 @@ toFormatMulti = fmap pp
 
 data Log = Log {clientes :: [Cliente], props :: [Prop], carros :: [Carro], alugueres :: [Aluguer], classific :: [Classificar]} deriving (Show)
 
-gen :: Int -> Int -> Gen Log
-gen c p = do
+gen :: Int -> Int -> Int -> Int -> Gen Log
+gen p c cars algs = do
   cs <- genClientes c
   ps <- genProps p
   let clientesNif = clientesToNifs cs
       propsNif = propsToNifs ps
-  carros <- genCarros propsNif
-  alugueres <- genAlugueres clientesNif
+  carros <- take cars <$> genCarros propsNif
+  alugueres <- take algs <$> genAlugueres clientesNif
   rMats <- choose (0, length carros)
   rNifsC <- choose (0, length cs)
   rNifsP <- choose (0, length ps)

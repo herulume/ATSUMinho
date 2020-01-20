@@ -20,8 +20,8 @@ main = checkSize =<< execParser opts
         )
 
 checkSize :: Cli -> IO ()
-checkSize (Cli props clientes fd)
-  | props >= 0 && clientes >= 0 = generate (gen props clientes) >>= dump fd
+checkSize (Cli props clientes fd cars algs)
+  | props >= 0 && clientes >= 0 && cars <= props && algs <= clientes && cars >= 0 && algs >= 0 = generate (gen props clientes cars algs) >>= dump fd
   | otherwise = return ()
 
 dump :: FilePath -> Log -> IO ()
@@ -39,7 +39,9 @@ data Cli
   = Cli
       { prop :: Int,
         cliente :: Int,
-        ficheiro :: String
+        ficheiro :: String,
+        cars :: Int,
+        alugs :: Int
       }
 
 cli :: Parser Cli
@@ -68,4 +70,16 @@ cli =
             <> short 'f'
             <> metavar "FICHEIRO"
             <> help "Ficheiro de dump"
+        )
+      <*> option
+        auto
+        ( long "carros"
+            <> help "Numero de carros"
+            <> metavar "INT"
+        )
+      <*> option
+        auto
+        ( long "algueres"
+            <> help "Numero de alugueres"
+            <> metavar "INT"
         )
