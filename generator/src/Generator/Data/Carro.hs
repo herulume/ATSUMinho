@@ -14,11 +14,11 @@ type Marca = String
 
 type CPKm = Float
 
-type Autonomia = Float
+type Autonomia = Int
 
 type PKm = Float
 
-type VMedia = Float
+type VMedia = Int
 
 instance Arbitrary Carro where
   arbitrary = genCarro
