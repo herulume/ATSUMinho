@@ -156,17 +156,30 @@ public class UmCarroJaApp{
     
     public static void main(String[] args){
         //initApp();
+
+        double[] before = EnergyCheckUtils.getEnergyStats();
+        long init_time = System.currentTimeMillis();
+
         initMenus();
         ucj = new UmCarroJa();
-        lerDadosTXT("logsPOO_carregamentoInicial.bak");
+        lerDadosTXT(args[0]);
         out.println("NÚMERO UTILIZADORES: " + ucj.getNUsers());
         out.println("NÚMERO VEÍCULOS: " + ucj.getNVeiculos());
         out.println("NÚMERO ALUGUERES: " + ucj.getNAlugs());
         //printUsers();
         //printVeiculos();
         //printAlugs();
-        lerData();
-        
+
+        long end_time = System.currentTimeMillis();
+        double[] after = EnergyCheckUtils.getEnergyStats();
+
+        long final_time = end_time - init_time;
+        System.out.println("Energy consumption of dram: " + (after[0] - before[0])+ " Energy consumption of cpu: " + (after[1] - before[1])+ " Energy consumption of package: " + (after[2] - before[2]));
+        System.out.println("Time of execution: " + final_time + " ms.");
+
+        return;
+        /*
+                lerData();
         ucj.alugueresEfetuados(dataInicioApp);
         do{
             UmCarroJaApp.clearScreen();
@@ -181,6 +194,7 @@ public class UmCarroJaApp{
             }
         }while(menuInicial.getOpcao() != 0);
         guardarDados();
+         */
     }
     
     /******************************************************************************
