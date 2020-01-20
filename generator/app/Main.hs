@@ -79,7 +79,7 @@ cli =
         )
       <*> option
         auto
-        ( long "algueres"
+        ( long "alugueres"
             <> help "Numero de alugueres"
             <> metavar "INT"
         )
