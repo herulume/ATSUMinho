@@ -19,7 +19,7 @@ instance Arbitrary Aluguer where
   arbitrary = genAluguer
 
 instance PrettyPrinter Aluguer where
-  pp (Aluguer nif x y t p) = ("Aluguer:" <>) . join . intersperse "," $ [nif, show x, show y, show p]
+  pp (Aluguer nif x y t p) = ("Aluguer:" <>) . join . intersperse "," $ [nif, show x, show y, show t, show p]
 
 genAlugueres :: [Nif] -> Gen [Aluguer]
 genAlugueres nifs = genMultiFrom nifs $ \nif (Aluguer _ x y t p) -> Aluguer nif x y t p
