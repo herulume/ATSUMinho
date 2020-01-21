@@ -938,8 +938,11 @@ public class UmCarroJa implements Serializable {
 
     public void alterarPosCliente(String mail, Coordinate dest) {
         Cliente cli = (Cliente) this.utilizadores.get(mail);
-        cli.setPosicao(dest);
-        cli.setNAlugueres(cli.getNAlugueres() + 1);
+        //ALTERED TO WORK WITH LOGS
+        if(cli != null){
+            cli.setPosicao(dest);
+            cli.setNAlugueres(cli.getNAlugueres() + 1);
+        }
     }
 
     public void classificarClienteJa(String mail, int classificacao) {
@@ -964,16 +967,19 @@ public class UmCarroJa implements Serializable {
 
     public void classificarVeiculoJa(String matricula, int classificacao) {
         Veiculo v = this.veiculos.get(matricula);
-        int nAlugs = v.getDatasAlugueres().size();
-        if (nAlugs == 0) {
-            nAlugs = 1;
+        //ALTERED FOR LOGS TO WORK
+        if(v != null){
+            int nAlugs = v.getDatasAlugueres().size();
+            if (nAlugs == 0) {
+                nAlugs = 1;
+            }
+            int classificAnterior = v.getClassificacao();
+            double novaClassificacao = (classificAnterior + classificacao) / (nAlugs);
+            Long c = Math.round(novaClassificacao);
+            int classifiFinal = Integer.valueOf(c.intValue());
+            v.setClassificacao(classifiFinal);
+            this.veiculos.replace(v.getMatricula(), v.clone());
         }
-        int classificAnterior = v.getClassificacao();
-        double novaClassificacao = (classificAnterior + classificacao) / (nAlugs);
-        Long c = Math.round(novaClassificacao);
-        int classifiFinal = Integer.valueOf(c.intValue());
-        v.setClassificacao(classifiFinal);
-        this.veiculos.replace(v.getMatricula(), v.clone());
     }
 
     public int getNUsers() {
