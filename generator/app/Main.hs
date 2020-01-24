@@ -31,7 +31,7 @@ dump fd l =
       cas = f carros l
       als = f alugueres l
       cla = f classific l
-   in writeFile fd (cs <> "\n" <> ps <> "\n" <> cas <> "\n" <> als <> "\n" <> cla)
+   in writeFile fd ("Logs\n" <> cs <> "\n" <> ps <> "\n" <> cas <> "\n" <> als <> "\n" <> cla)
   where
     f g = join . (++ ["\n"]) . intersperse "\n" . toFormatMulti . g
 
