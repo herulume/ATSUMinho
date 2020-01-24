@@ -20,9 +20,5 @@ Since we are running this with stack, we need to add `--` before the arguments.
 
 Example:
 ```
-stack run -- -p 2000 -c 2000 -f logs
+stack run -- -p 2000 -c 2000 -f logs --carros 100 --alugueres 20
 ```
-
-## TODO
-- Acentos
-- Tipo de carro por marca
